@@ -20,6 +20,7 @@ app.use(passport.initialize());
 require('./middleware/passport')(passport);
 
 app.use(morgan('dev')); // for log api in terminal
+app.use('/uploads', express.static('uploads'));
 
 app.use(bodyParser.urlencoded({ extended: true })); // parse response
 app.use(bodyParser.json());
