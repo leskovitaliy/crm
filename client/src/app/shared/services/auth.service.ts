@@ -14,8 +14,8 @@ export class AuthService {
   constructor(private http: HttpClient) {
   }
 
-  registre() {
-
+  registre(user: IUser): Observable<IUser> {
+    return this.http.post<IUser>('/api/auth/register', user);
   }
 
   login(user: IUser): Observable<{ token: string }> {
