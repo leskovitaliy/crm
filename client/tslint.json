@@ -25,6 +25,10 @@
       true,
       "spaces"
     ],
+    "align": [
+      true,
+      "parameters"
+    ],
     "interface-over-type-literal": true,
     "label-position": true,
     "max-line-length": [
@@ -36,10 +40,21 @@
       true,
       {
         "order": [
-          "static-field",
-          "instance-field",
-          "static-method",
-          "instance-method"
+          "public-static-field",
+          "protected-static-field",
+          "private-static-field",
+          "public-instance-field",
+          "protected-instance-field",
+          "private-instance-field",
+          "public-constructor",
+          "protected-constructor",
+          "private-constructor",
+          "public-instance-method",
+          "protected-instance-method",
+          "private-instance-method",
+          "public-static-method",
+          "protected-static-method",
+          "private-static-method"
         ]
       }
     ],
@@ -80,7 +95,8 @@
       "check-open-brace",
       "check-catch",
       "check-else",
-      "check-whitespace"
+      "check-whitespace",
+      "check-finally"
     ],
     "prefer-const": true,
     "quotemark": [
@@ -107,7 +123,14 @@
       }
     ],
     "unified-signatures": true,
-    "variable-name": false,
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-leading-underscore",
+      "allow-trailing-underscore",
+      "allow-pascal-case"
+    ],
     "whitespace": [
       true,
       "check-branch",
@@ -115,6 +138,18 @@
       "check-operator",
       "check-separator",
       "check-type"
+    ],
+    "directive-selector": [
+      true,
+      "attribute",
+      "app",
+      "kebab-case"
+    ],
+    "component-selector": [
+      true,
+      "element",
+      "app",
+      "kebab-case"
     ],
     "no-output-on-prefix": true,
     "use-input-property-decorator": true,
@@ -126,5 +161,12 @@
     "use-pipe-transform-interface": true,
     "component-class-suffix": true,
     "directive-class-suffix": true
-  }
+  },
+  "ordered-imports": [
+    true,
+    {
+      "import-sources-order": "any",
+      "named-imports-order": "case-insensitive"
+    }
+  ]
 }
