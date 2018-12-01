@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { CategoriesService } from '../shared/services/categories.service';
 import { ICategory } from '../shared/interfaces';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-categories-page',
@@ -9,21 +10,13 @@ import { ICategory } from '../shared/interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoriesPageComponent implements OnInit {
+  categories$: Observable<ICategory[]>;
 
-  loading = false;
-  categories: ICategory[] = [];
-
-  constructor(private categoriesService: CategoriesService,
-              private cdr: ChangeDetectorRef) {
+  constructor(private categoriesService: CategoriesService) {
   }
 
   ngOnInit() {
-    this.loading = true;
-    this.categoriesService.get().subscribe((categories: Array<ICategory>) => {
-      this.loading = false;
-      this.categories = categories;
-      this.cdr.detectChanges();
-    });
+    this.categories$ = this.categoriesService.get();
   }
 
 }
