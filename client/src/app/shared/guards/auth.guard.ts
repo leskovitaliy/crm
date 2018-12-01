@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Params, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
@@ -15,11 +15,8 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     if (this.authService.isAuthenticated()) {
       return of(true);
     } else {
-      this.router.navigate(['/login', {
-        queryParams: {
-          accessDenied: true
-        }
-      }]);
+      const queryParams: Params = { accessDenied: true };
+      this.router.navigate(['/login'], { queryParams });
 
       return of(false);
     }
