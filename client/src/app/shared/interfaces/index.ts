@@ -13,3 +13,11 @@ export interface ICategory {
 export interface IMessage {
   message: string;
 }
+
+export interface IPosition {
+  name: string;
+  cost: number;
+  category: string;
+  user?: string;
+  _id?: string;
+}
