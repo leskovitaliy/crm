@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CategoriesService } from '../../shared/services/categories.service';
@@ -13,12 +13,18 @@ import { ICategory } from '../../shared/interfaces';
   styleUrls: ['./categories-form.component.scss']
 })
 export class CategoriesFormComponent implements OnInit {
-  isNew = true;
   form: FormGroup;
+  isNew = true;
+  image: File;
+  imagePreview = '';
+  category: ICategory;
+
+  @ViewChild('input') inputRef: ElementRef;
 
   constructor(private aRoute: ActivatedRoute,
               private fb: FormBuilder,
-              private categoriesService: CategoriesService) { }
+              private categoriesService: CategoriesService,
+              private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -40,19 +46,64 @@ export class CategoriesFormComponent implements OnInit {
       .subscribe(
         (category: ICategory) => {
           if (category) {
+            this.category = category;
             this.form.patchValue({
               name: category.name
             });
+            this.imagePreview = category.imageSrc;
             MaterialService.updateTextInputs();
           }
           this.form.enable();
+          this.cdr.detectChanges();
         },
         err => MaterialService.toast(err.error.message)
       );
   }
 
-  onSubmit() {
+  openLoadImg() {
+    this.inputRef.nativeElement.click();
+  }
 
+  onFileUpload(event: any) {
+    const file = event.target.files[0];
+    this.image = file;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.imagePreview = reader.result;
+      this.cdr.detectChanges();
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+      this.cdr.detectChanges();
+    }
+  }
+
+  onSubmit() {
+    let obs$;
+    this.form.disable();
+
+    if (this.isNew) {
+      obs$ = this.categoriesService.create(this.form.value.name, this.image);
+    } else {
+      obs$ = this.categoriesService.update(this.category._id, this.form.value.name, this.image);
+    }
+
+    obs$.subscribe(
+      (category: ICategory) => {
+        this.category = category;
+        MaterialService.toast('Changes saved');
+        this.form.enable();
+        this.cdr.detectChanges();
+      },
+      err => {
+        MaterialService.toast(err.error.message);
+        this.form.enable();
+        this.cdr.detectChanges();
+      }
+    );
   }
 
 }

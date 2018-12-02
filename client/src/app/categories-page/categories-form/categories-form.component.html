@@ -32,7 +32,14 @@
     </div>
 
     <div>
+      <input type="file"
+             class="load-img--hide"
+             (change)="onFileUpload($event)"
+             #input />
+
       <button type="button"
+              (click)="openLoadImg()"
+              [disabled]="form.disabled"
               class="waves-effect waves-light btn orange lighten-2 mb2">
         <i class="material-icons left">backup</i>
         Загрузить изображение
@@ -49,7 +56,9 @@
   </form>
 
   <div class="col s12 l4 center">
-    <img class="responsive-img" style="height: 200px" src="cake.jpg">
+    <img *ngIf="imagePreview"
+         class="responsive-img h200"
+         [src]="imagePreview" />
   </div>
 </div>
 
