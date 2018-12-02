@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CategoriesService } from '../../shared/services/categories.service';
 import { switchMap } from 'rxjs/operators';
@@ -22,6 +22,7 @@ export class CategoriesFormComponent implements OnInit {
   @ViewChild('input') inputRef: ElementRef;
 
   constructor(private aRoute: ActivatedRoute,
+              private router: Router,
               private fb: FormBuilder,
               private categoriesService: CategoriesService,
               private cdr: ChangeDetectorRef) { }
@@ -58,6 +59,19 @@ export class CategoriesFormComponent implements OnInit {
         },
         err => MaterialService.toast(err.error.message)
       );
+  }
+
+  deleteCategory() {
+    const decision = window.confirm(`Are you sure you want to delete the category: ${this.category.name} ?`);
+
+    if (decision) {
+      this.categoriesService.delete(this.category._id)
+        .subscribe(
+          response => MaterialService.toast(response.message),
+          err => MaterialService.toast(err.error.message),
+          () => this.router.navigate(['/categories'])
+        );
+    }
   }
 
   openLoadImg() {
