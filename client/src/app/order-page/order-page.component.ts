@@ -2,7 +2,9 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import { NavigationEnd, Router } from '@angular/router';
 import { IMaterialInstance, MaterialService } from '../shared/services/material.service';
 import { OrderService } from './order.service';
-import { IOrderPosition } from '../shared/interfaces';
+import { IOrder, IOrderPosition } from '../shared/interfaces';
+import { OrdersService } from '../shared/services/orders.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-order-page',
@@ -14,11 +16,14 @@ export class OrderPageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   isRoot: boolean;
   modal: IMaterialInstance;
+  pending = false;
+  orderSub$: Subscription;
 
   @ViewChild('modal') modalRef: ElementRef;
 
   constructor(private router: Router,
-              public orderService: OrderService) {
+              public orderService: OrderService,
+              private ordersService: OrdersService) {
   }
 
   ngOnInit() {
@@ -36,6 +41,10 @@ export class OrderPageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.modal.destroy();
+
+    if (this.orderSub$) {
+      this.orderSub$.unsubscribe();
+    }
   }
 
   removePosition(orderPosition: IOrderPosition) {
@@ -51,7 +60,27 @@ export class OrderPageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submit() {
-    this.modal.close();
+    this.pending = true;
+
+    const order: IOrder = {
+      list: this.orderService.list.map(item => {
+        delete item._id;
+        return item;
+      })
+    };
+
+    this.orderSub$ = this.ordersService.create(order)
+      .subscribe(
+        newOrder => {
+          MaterialService.toast(`Order №${newOrder.order} added.`);
+          this.orderService.clear();
+        },
+        error => MaterialService.toast(error.error.message),
+        () => {
+          this.modal.close();
+          this.pending = false;
+        }
+      );
   }
 
 }
