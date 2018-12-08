@@ -1,6 +1,6 @@
 export interface IAnalytics {
   average: number;
-  chart: IAnalyticsChartItem;
+  chart: IAnalyticsChartItem[];
 }
 
 export interface IAnalyticsChartItem {
