@@ -4,7 +4,7 @@ const errorHandler = require('../utils/errorHandler');
 
 module.exports.overview = async (req, res) => {
   try {
-    const allOrders = await Order.find({ user: req.user.id }).sort(1);
+    const allOrders = await Order.find({ user: req.user.id }).sort({ date: 1 });
     const ordersMap = getOrdersMap(allOrders);
     const yesterdayOrders = ordersMap[moment().add(-1, 'd').format('DD.MM.YYYY')] || [];
 
@@ -35,14 +35,14 @@ module.exports.overview = async (req, res) => {
       profit: {
         percent: Math.abs(+profitPercent),
         compare: Math.abs(+compareProfit),
-        yesterday: Math.parseInt(profitYesterday, 10),
-        isHigher: Math.parseInt(profitPercent, 10) > 0
+        yesterday: +profitYesterday,
+        isHigher: +profitPercent > 0
       },
       orders: {
         percent: Math.abs(+ordersPercent),
         compare: Math.abs(+compareNumber),
-        yesterday: Math.parseInt(yesterdayOrdersNumber, 10),
-        isHigher: Math.parseInt(ordersPercent, 10) > 0
+        yesterday: +yesterdayOrdersNumber,
+        isHigher: +ordersPercent > 0
       }
     })
 
