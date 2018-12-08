@@ -13,7 +13,7 @@ const positionRoutes = require('./routes/position');
 const keys = require('./config/keys');
 const app = express();
 
-mongoose.connect(keys.mongoURL, { useNewUrlParser: true, createIndexes: true })
+mongoose.connect(keys.mongoURI, { useNewUrlParser: true, createIndexes: true })
     .then(() => console.log('Mongo db connected.'))
     .catch(err => console.log(err));
 
