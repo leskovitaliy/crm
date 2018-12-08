@@ -4,6 +4,7 @@ import { OrdersService } from '../shared/services/orders.service';
 import { STEP } from './constants/history';
 import { Subscription } from 'rxjs';
 import { IOrder } from '../shared/interfaces';
+import { IFIlter } from './interfaces/history';
 
 @Component({
   selector: 'app-history-page',
@@ -17,6 +18,7 @@ export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   isFilterVisible = false;
   orders: IOrder[] = [];
+  filter: IFIlter = {};
 
   offset = 0;
   limit = STEP;
@@ -51,11 +53,25 @@ export class HistoryPageComponent implements OnInit, OnDestroy, AfterViewInit {
     this.getOrders();
   }
 
+  applyFilter(filter: IFIlter) {
+    this.orders = [];
+    this.offset = 0;
+    this.filter = filter;
+    this.reloading = true;
+    this.getOrders();
+    this.cdr.detectChanges();
+  }
+
+  isFiltered(): boolean {
+    return this.filter ? Object.keys(this.filter).length !== 0 : false;
+  }
+
   private getOrders() {
-    const params = {
+    const params = Object.assign({}, this.filter, {
       offset: this.offset,
       limit: this.limit
-    };
+    });
+
     this.ordersSub$ = this.ordersService.get(params).subscribe(orders => {
       this.orders = this.orders.concat(orders);
       this.noMoreOrders = orders.length < STEP;
