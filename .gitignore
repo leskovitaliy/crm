@@ -39,6 +39,6 @@ testem.log
 Thumbs.db
 package-lock.json
 
-/config/keys.dev.js
+config/keys.dev.js
 /uploads
 /etc
